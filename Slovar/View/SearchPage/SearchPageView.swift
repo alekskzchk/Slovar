@@ -46,19 +46,7 @@ struct SearchPageView: View {
             }
             
             if isLoading || viewModel.isLoadingLanguages {
-                withAnimation(.easeIn) {
-                    ZStack {
-                        RadialGradient(colors: [.black, .clear], center: .center, startRadius: 900, endRadius: 0)
-                        Color(.black.opacity(0.7))
-                            .frame(width: 100, height: 100)
-                            .cornerRadius(15)
-                        ProgressView()
-                            .progressViewStyle(.circular)
-                            .scaleEffect(2)
-                            .tint(.white)
-                    }
-                    .ignoresSafeArea(.all)
-                }
+                LoadingIndicator()
             }
         }
     }
