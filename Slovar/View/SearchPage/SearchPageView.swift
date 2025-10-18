@@ -24,7 +24,7 @@ struct SearchPageView: View {
                             .task {
                                 await viewModel.fetchLanguages()
                             }
-                            .disabled(viewModel.isLoadingLanguages || viewModel.isLoadingSearchResult)
+                            .disabled(viewModel.isLoadingLanguages)
                         SearchBarView(viewModel: viewModel) { word in
                             isLoading = true
                             if let result = await viewModel.search(word: word) {

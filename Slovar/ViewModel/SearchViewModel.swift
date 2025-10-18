@@ -12,7 +12,6 @@ import SwiftUI
 @Observable
 class SearchViewModel {
     var searchResult: LookupResult?
-    var isLoadingSearchResult = false
     var isLoadingLanguages: Bool = false
     var errorMessage: String?
     var allLanguages: [Language] = []
@@ -84,14 +83,13 @@ class SearchViewModel {
                     persistenceManager.setCachedLanguagePairs(newPairs)
                 }
             }
-            isLoadingLanguages = false
         } else {
             if let newPairs = await loadAndCacheLanguagePairs() {
                 allLanguages = buildLanguages(from: newPairs)
                 persistenceManager.setCachedLanguagePairs(newPairs)
             }
-            isLoadingLanguages = false
         }
+        isLoadingLanguages = false
     }
     
     func loadAndCacheLanguagePairs() async -> [String]? {
@@ -107,24 +105,20 @@ class SearchViewModel {
     }
     
     func search(word: String) async -> LookupResult? {
-        isLoadingSearchResult = true
         do {
             guard !word.isEmpty else {
                 errorMessage = String(localized: "Enter a word to translate")
-                isLoadingSearchResult = false
                 return nil
             }
             guard let selectedSource, let selectedTarget else {
                 errorMessage = String(localized: "Source and target languages are not selected")
-                isLoadingSearchResult = false
                 return nil
             }
             let languagePair = "\(selectedSource.id)-\(selectedTarget.id)"
-            
+
             return try await dictionaryAPI.lookup(word: word, lang: languagePair)
         } catch {
             self.errorMessage = error.localizedDescription
-            isLoadingSearchResult = false
             return nil
         }
         
