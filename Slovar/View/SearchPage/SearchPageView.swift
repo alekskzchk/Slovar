@@ -30,9 +30,9 @@ struct SearchPageView: View {
                             if let result = await viewModel.search(word: word) {
                                 await MainActor.run {
                                     lookupResult = result
-                                    isLoading = false
                                 }
                             }
+                            isLoading = false
                         }
                     }
                     .padding(.horizontal, 16)
@@ -45,13 +45,17 @@ struct SearchPageView: View {
                 }
             }
             
-            if isLoading {
+            if isLoading || viewModel.isLoadingLanguages {
                 withAnimation(.easeIn) {
                     ZStack {
                         RadialGradient(colors: [.black, .clear], center: .center, startRadius: 900, endRadius: 0)
+                        Color(.black.opacity(0.7))
+                            .frame(width: 100, height: 100)
+                            .cornerRadius(15)
                         ProgressView()
                             .progressViewStyle(.circular)
                             .scaleEffect(2)
+                            .tint(.white)
                     }
                     .ignoresSafeArea(.all)
                 }
