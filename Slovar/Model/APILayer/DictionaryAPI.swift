@@ -134,7 +134,7 @@ enum APIError: LocalizedError {
             case .blockedKey: return String(localized: "APIerrors.blockedAPIKey")
             case .keyDailyLimitExceeded: return String(localized: "APIerrors.APIKeyDailyLimitExceeded")
             case .textTooLong: return String(localized: "APIerrors.textTooLong")
-            case .unsupportedLangsPair: return String(localized: "APIerrors.unsupportedLanguagePair")
+            case .unsupportedLanguagePair: return String(localized: "APIerrors.unsupportedLanguagePair")
             case .notFound: return String(localized: "APIerrors.wordNotFound")
             case .unknown: return String(localized: "APIerrors.unknownError")
             }

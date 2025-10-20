@@ -59,7 +59,7 @@ enum APIErrorCode: Int, Decodable {
     case blockedKey = 402
     case keyDailyLimitExceeded = 403
     case textTooLong = 413
-    case unsupportedLangsPair = 501
+    case unsupportedLanguagePair = 501
     case notFound = 502
     case unknown = -1
     
