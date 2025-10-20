@@ -14,6 +14,7 @@ import SwiftUI
 class SearchViewModel {
     var searchResult: LookupResult?
     var isLoadingLanguages: Bool = false
+    var isLoadingSearchQuery: Bool = false
     var errorMessage: String?
     var allLanguages: [Language] = []
     var selectedSource: Language?
@@ -23,6 +24,9 @@ class SearchViewModel {
     
     init(modelContext: ModelContext) {
         self.persistenceManager = PersistenceManager(context: modelContext)
+        Task {
+            await loadLangs()
+        }
     }
     
     var availableSources: [Language] {
@@ -87,10 +91,12 @@ class SearchViewModel {
                 }
                 let languagePair = "\(selectedSource.id)-\(selectedTarget.id)"
                 let wordRefined = word.trimmingCharacters(in: .whitespacesAndNewlines)
+                isLoadingSearchQuery = true
                 let lookupResult = try await dictionaryAPI.lookup(word: wordRefined, lang: languagePair)
                 print("SearchViewModel: Fetched new result")
                 persistenceManager.saveToCache(id: id, lookupResult: lookupResult)
                 print("SearchViewModel: Saved to cache")
+                isLoadingSearchQuery = false
                 return await persistenceManager.fetchFromCache(id: id).1
             } catch {
                 self.errorMessage = error.localizedDescription

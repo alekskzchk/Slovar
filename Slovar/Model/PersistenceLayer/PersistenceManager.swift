@@ -26,7 +26,7 @@ struct PersistenceManager {
             predicate: #Predicate { $0.id == id }
         )
         guard let cachedItem = try? context.fetch(descriptor).first,
-              let lookupResult = try? JSONDecoder().decode(LookupResult.self, from: cachedItem.lookupResultData)
+              let lookupResult = try? JSONDecoder().decode(LookupResult.self, from: cachedItem.json)
         else { return (nil, nil) }
         
         print("Got from cache")
