@@ -85,7 +85,7 @@ enum APIError: LocalizedError {
     case decoding
     case unknown(Error)
     case apiError(code: APIErrorCode)
-    
+
     var errorDescription: String? {
         switch self {
         case .badURL:

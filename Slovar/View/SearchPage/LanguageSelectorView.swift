@@ -45,7 +45,7 @@ struct LanguageSelectorView: View {
     
 }
 
-#Preview {
-    let mockViewModel = SearchViewModel()
-    return LanguageSelectorView(viewModel: mockViewModel)
-}
+//#Preview {
+//    let mockViewModel = SearchViewModel()
+//    return LanguageSelectorView(viewModel: mockViewModel)
+//}

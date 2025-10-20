@@ -6,6 +6,7 @@
 //
 
 import Observation
+import SwiftData
 import SwiftUI
 
 @MainActor
@@ -18,7 +19,11 @@ class SearchViewModel {
     var selectedSource: Language?
     var selectedTarget: Language?
     let dictionaryAPI = DictionaryAPI()
-    let persistenceManager = PersistenceManager.shared
+    private let persistenceManager: PersistenceManager
+    
+    init(modelContext: ModelContext) {
+        self.persistenceManager = PersistenceManager(context: modelContext)
+    }
     
     var availableSources: [Language] {
         guard let target = selectedTarget else { return allLanguages }
@@ -75,19 +80,8 @@ class SearchViewModel {
     func fetchLanguages() async {
         isLoadingLanguages = true
         errorMessage = nil
-        if let cachedLanguages = await persistenceManager.getCachedLanguagePairs() {
-            let oneWeek: Double = 7 * 24 * 60 * 60
-            if Date().timeIntervalSince(cachedLanguages.dateOfLastFetch) > oneWeek {
-                if let newPairs = await loadAndCacheLanguagePairs() {
-                    allLanguages = buildLanguages(from: newPairs)
-                    persistenceManager.setCachedLanguagePairs(newPairs)
-                }
-            }
-        } else {
-            if let newPairs = await loadAndCacheLanguagePairs() {
-                allLanguages = buildLanguages(from: newPairs)
-                persistenceManager.setCachedLanguagePairs(newPairs)
-            }
+        if let newPairs = await loadAndCacheLanguagePairs() {
+            allLanguages = buildLanguages(from: newPairs)
         }
         isLoadingLanguages = false
     }
@@ -105,22 +99,33 @@ class SearchViewModel {
     }
     
     func search(word: String) async -> LookupResult? {
-        do {
-            guard !word.isEmpty else {
-                errorMessage = String(localized: "Enter a word to translate")
-                return nil
-            }
-            guard let selectedSource, let selectedTarget else {
-                errorMessage = String(localized: "Source and target languages are not selected")
-                return nil
-            }
-            let languagePair = "\(selectedSource.id)-\(selectedTarget.id)"
-
-            return try await dictionaryAPI.lookup(word: word, lang: languagePair)
-        } catch {
-            self.errorMessage = error.localizedDescription
+        guard let selectedSource, let selectedTarget else {
+            errorMessage = String(localized: "Source and target languages are not selected")
             return nil
         }
-        
+        let id = persistenceManager.makeCacheItemId(sourceLang: selectedSource, targetLang: selectedTarget, userPrompt: word)
+        let fetchResult = await persistenceManager.fetchFromCache(id: id)
+        if let cachedItem = fetchResult.0, let lookupResult = fetchResult.1 {
+            cachedItem.lastSearchDate = .now
+            print("SearchViewModel: Using cached result")
+            return lookupResult
+        } else {
+            do {
+                guard !word.isEmpty else {
+                    errorMessage = String(localized: "Enter a word to translate")
+                    return nil
+                }
+                let languagePair = "\(selectedSource.id)-\(selectedTarget.id)"
+                let wordRefined = word.trimmingCharacters(in: .whitespacesAndNewlines)
+                let lookupResult = try await dictionaryAPI.lookup(word: wordRefined, lang: languagePair)
+                print("SearchViewModel: Fetched new result")
+                persistenceManager.saveToCache(id: id, lookupResult: lookupResult)
+                print("SearchViewModel: Saved to cache")
+                return await persistenceManager.fetchFromCache(id: id).1
+            } catch {
+                self.errorMessage = error.localizedDescription
+                return nil
+            }
+        }
     }
 }

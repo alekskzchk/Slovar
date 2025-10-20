@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct TabBarView: View {
+    @Environment(\.modelContext) var modelContext
     @State private var selectedTab: Tab = .search
     
     enum Tab {
@@ -16,7 +17,7 @@ struct TabBarView: View {
     
     var body: some View {
         TabView(selection: $selectedTab) {
-            SearchPageView()
+            SearchPageView(modelContext: modelContext)
                 .tabItem {
                     Label("Search", systemImage: "magnifyingglass")
                 }

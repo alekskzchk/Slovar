@@ -5,13 +5,20 @@
 //  Created by Алексей Козачук on 06.09.2025.
 //
 
+import SwiftData
 import SwiftUI
 
 struct SearchPageView: View {
-    @State private var viewModel = SearchViewModel()
+    
+    @Environment(\.colorScheme) var colorScheme
+    private var viewModel: SearchViewModel
     @State var lookupResult: LookupResult?
     @State var isLoading: Bool = false
-    @Environment(\.colorScheme) var colorScheme
+    
+    init(modelContext: ModelContext) {
+        self.viewModel = SearchViewModel(modelContext: modelContext)
+    }
+    
     var body: some View {
         ZStack {
             NavigationStack {
@@ -52,6 +59,6 @@ struct SearchPageView: View {
     }
 }
 
-#Preview {
-    SearchPageView()
-}
+//#Preview {
+//    SearchPageView()
+//}

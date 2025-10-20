@@ -5,6 +5,7 @@
 //  Created by Алексей Козачук on 05.09.2025.
 //
 
+import SwiftData
 import SwiftUI
 import Observation
 
@@ -101,14 +102,19 @@ struct SearchBarView: View {
     }
 }
 
-#Preview {
-    let mockViewModel = SearchViewModel()
-    mockViewModel.allLanguages = [
-        Language(id: "en", name: "English", possiblePairsIds: ["ru", "fr"]),
-        Language(id: "ru", name: "Русский", possiblePairsIds: ["en"]),
-        Language(id: "fr", name: "Français", possiblePairsIds: ["en"]),
-        Language(id: "pt", name: "Brazilian Portuguese", possiblePairsIds: ["en", "ru", "fr"])
-    ]
-    
-    return SearchBarView(viewModel: mockViewModel, searchButtonTapped: {_ in })
-}
+//#Preview {
+//    if let config = try? ModelConfiguration(isStoredInMemoryOnly: true),
+//       let container = try? ModelContainer(for: CachedItem.self, configurations: config) {
+//        let mockViewModel = SearchViewModel(modelContext: container)
+//        mockViewModel.modelContext(container)
+//        mockViewModel.allLanguages = [
+//            Language(id: "en", name: "English", possiblePairsIds: ["ru", "fr"]),
+//            Language(id: "ru", name: "Русский", possiblePairsIds: ["en"]),
+//            Language(id: "fr", name: "Français", possiblePairsIds: ["en"]),
+//            Language(id: "pt", name: "Brazilian Portuguese", possiblePairsIds: ["en", "ru", "fr"])
+//        ]
+//        
+//        SearchBarView(viewModel: mockViewModel, searchButtonTapped: {_ in })
+//            
+//    }
+//}
