@@ -73,8 +73,38 @@ final class DictionaryAPI {
         guard let decodedData = try? JSONDecoder().decode([String].self, from: data) else {
             throw APIError.decoding
         }
+        let refinedDecodedData = decodedData.filter { !$0.contains("emj") }
+        ///"emj" stands for Emoji.
+        ///Since neither of language pairs with Emoji provide any translation due to unknown reason,
+        ///these pairs are subtracted from API response.
+        return refinedDecodedData
+    }
+    
+    func buildLangs(from pairs: [String]) -> [Language] {
+        var map: [String: Set<String>] = [:]
         
-        return decodedData
+        for pair in pairs {
+            let components = pair.split(separator: "-").map(String.init)
+            let source: String
+            let target: String
+            if components.count == 2 {
+                source = components[0]
+                target = components[1]
+            } else {
+                source = components[0]
+                target = components[1] + "-" + components[2]
+            }
+            map[source, default: []].insert(target)
+        }
+        
+        let langs = map.map { (id, targets) in
+            Language(
+                id: id,
+                name: Locale.current.localizedString(forLanguageCode: id) ?? id,
+                possiblePairsIds: Array(targets)
+            )
+        }
+        return langs.sorted { $0.name > $1.name }
     }
 }
 
@@ -85,7 +115,7 @@ enum APIError: LocalizedError {
     case decoding
     case unknown(Error)
     case apiError(code: APIErrorCode)
-
+    
     var errorDescription: String? {
         switch self {
         case .badURL:
@@ -104,7 +134,7 @@ enum APIError: LocalizedError {
             case .blockedKey: return String(localized: "APIerrors.blockedAPIKey")
             case .keyDailyLimitExceeded: return String(localized: "APIerrors.APIKeyDailyLimitExceeded")
             case .textTooLong: return String(localized: "APIerrors.textTooLong")
-            case .unsupportedLanguagePair: return String(localized: "APIerrors.unsupportedLanguagePair")
+            case .unsupportedLangsPair: return String(localized: "APIerrors.unsupportedLanguagePair")
             case .notFound: return String(localized: "APIerrors.wordNotFound")
             case .unknown: return String(localized: "APIerrors.unknownError")
             }

@@ -13,7 +13,6 @@ struct SearchPageView: View {
     @Environment(\.colorScheme) var colorScheme
     private var viewModel: SearchViewModel
     @State var lookupResult: LookupResult?
-    @State var isLoading: Bool = false
     
     init(modelContext: ModelContext) {
         self.viewModel = SearchViewModel(modelContext: modelContext)
@@ -28,18 +27,13 @@ struct SearchPageView: View {
                         TooltipView(tooltipMessage: viewModel.errorMessage)
                             .padding(.bottom, 20)
                         LanguageSelectorView(viewModel: viewModel)
-                            .task {
-                                await viewModel.fetchLanguages()
-                            }
                             .disabled(viewModel.isLoadingLanguages)
                         SearchBarView(viewModel: viewModel) { word in
-                            isLoading = true
                             if let result = await viewModel.search(word: word) {
                                 await MainActor.run {
                                     lookupResult = result
                                 }
                             }
-                            isLoading = false
                         }
                     }
                     .padding(.horizontal, 16)
@@ -52,7 +46,7 @@ struct SearchPageView: View {
                 }
             }
             
-            if isLoading || viewModel.isLoadingLanguages {
+            if viewModel.isLoadingSearchQuery || viewModel.isLoadingLanguages {
                 LoadingIndicator()
             }
         }
