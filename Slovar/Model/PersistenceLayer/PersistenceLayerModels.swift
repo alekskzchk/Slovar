@@ -33,3 +33,14 @@ class CachedLangs {
         self.langs = langs
     }
 }
+
+@Model
+class LastSelectedLangsPair {
+    var source: Language
+    var target: Language
+    
+    init(source: Language, target: Language) {
+        self.source = source
+        self.target = target
+    }
+}

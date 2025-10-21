@@ -19,6 +19,7 @@ class SearchViewModel {
     var allLanguages: [Language] = []
     var selectedSource: Language?
     var selectedTarget: Language?
+    var lastSelectedLangsPair: LastSelectedLangsPair?
     let dictionaryAPI = DictionaryAPI()
     private let persistenceManager: PersistenceManager
     
@@ -26,6 +27,7 @@ class SearchViewModel {
         self.persistenceManager = PersistenceManager(context: modelContext)
         Task {
             await loadLangs()
+            await loadLastSelectedLangsPair()
         }
     }
     
@@ -72,11 +74,26 @@ class SearchViewModel {
         allLanguages = dictionaryAPI.buildLangs(from: rawStrings)
     }
     
+    func loadLastSelectedLangsPair() async {
+        guard let lastSelectedLangsPair = await persistenceManager.fetchLastSelectedLangsPair()
+        else { return }
+        self.lastSelectedLangsPair = lastSelectedLangsPair
+            selectedSource = lastSelectedLangsPair.source
+            selectedTarget = lastSelectedLangsPair.target
+    }
+    
     func search(word: String) async -> LookupResult? {
         guard let selectedSource, let selectedTarget else {
             errorMessage = String(localized: "Source and target languages are not selected")
             return nil
         }
+        if lastSelectedLangsPair != nil {
+            lastSelectedLangsPair!.source = selectedSource
+            lastSelectedLangsPair!.target = selectedTarget
+        } else {
+            persistenceManager.createLastSelectedLangsPair(source: selectedSource, target: selectedTarget)
+        }
+        
         let id = persistenceManager.makeCacheItemId(sourceLang: selectedSource, targetLang: selectedTarget, userPrompt: word)
         let fetchResult = await persistenceManager.fetchFromCache(id: id)
         if let cachedItem = fetchResult.0, let lookupResult = fetchResult.1 {

@@ -62,4 +62,18 @@ struct PersistenceManager {
         guard let cachedLangs = try? context.fetch(descriptor).first else { return nil }
         return cachedLangs.langs
     }
+    
+    func fetchLastSelectedLangsPair() async -> LastSelectedLangsPair? {
+        let descriptor = FetchDescriptor<LastSelectedLangsPair>()
+        guard let pair = try? context.fetch(descriptor).first else { return nil }
+        print("Retrieved last selected langs pair from cache")
+        return pair
+    }
+    
+    func createLastSelectedLangsPair(source: Language, target: Language) {
+        let pair = LastSelectedLangsPair(source: source, target: target)
+        context.insert(pair)
+        try? context.save()
+        print("Saved langs pair to cache")
+    }
 }
