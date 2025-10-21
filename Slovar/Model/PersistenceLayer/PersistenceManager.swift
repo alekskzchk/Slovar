@@ -21,7 +21,7 @@ struct PersistenceManager {
         return id
     }
     
-    func fetchFromCache(id: String) async -> (CachedItem?, LookupResult?) {
+    func fetchFromCache(id: String) -> (CachedItem?, LookupResult?) {
         let descriptor = FetchDescriptor<CachedItem>(
             predicate: #Predicate { $0.id == id }
         )
@@ -33,11 +33,12 @@ struct PersistenceManager {
         return (cachedItem, lookupResult)
     }
     
-    func saveToCache(id: String, lookupResult: LookupResult) {
+    func saveToCache(id: String, languagePair: String, lookupResult: LookupResult) {
         if let data = try? JSONEncoder().encode(lookupResult) {
             let cachedItem = CachedItem(
                 id: id,
-                lookupResultData: data,
+                json: data,
+                languagePair: languagePair,
                 lastSearchDate: .now,
                 isBookmarked: false,
                 showInHistory: true
@@ -48,6 +49,11 @@ struct PersistenceManager {
         } else {
             fatalError("Failed to create CachedItem object encoding lookupResult")
         }
+    }
+    
+    func fetchAllCachedItems() async -> [CachedItem]? {
+        let descriptor = FetchDescriptor<CachedItem>()
+        return try? context.fetch(descriptor)
     }
     
     func saveLangs(_ langs: [String]) {
@@ -63,15 +69,15 @@ struct PersistenceManager {
         return cachedLangs.langs
     }
     
-    func fetchLastSelectedLangsPair() async -> LastSelectedLangsPair? {
-        let descriptor = FetchDescriptor<LastSelectedLangsPair>()
+    func fetchLastSelectedLangsPair() async -> LangPair? {
+        let descriptor = FetchDescriptor<LangPair>()
         guard let pair = try? context.fetch(descriptor).first else { return nil }
         print("Retrieved last selected langs pair from cache")
         return pair
     }
     
     func createLastSelectedLangsPair(source: Language, target: Language) {
-        let pair = LastSelectedLangsPair(source: source, target: target)
+        let pair = LangPair(source: source, target: target)
         context.insert(pair)
         try? context.save()
         print("Saved langs pair to cache")

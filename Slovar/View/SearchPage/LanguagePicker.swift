@@ -28,6 +28,8 @@ struct LanguagePicker: View {
                     }
                 })
             }
+            
+            //TODO: Make buttons above clear their respective picker choice, not each other's
                 
             ForEach(viewModel.allLanguages) { language in
                 var isCompatible: Bool {

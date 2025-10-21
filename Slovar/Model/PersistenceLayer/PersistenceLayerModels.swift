@@ -12,13 +12,15 @@ import SwiftData
 class CachedItem: Identifiable {
     var id: String
     var json: Data
+    var languagePair: String
     var lastSearchDate: Date
     var isBookmarked: Bool
     var showInHistory: Bool
     
-    init(id: String, lookupResultData: Data, lastSearchDate: Date, isBookmarked: Bool, showInHistory: Bool) {
+    init(id: String, json: Data, languagePair: String, lastSearchDate: Date, isBookmarked: Bool, showInHistory: Bool) {
         self.id = id
-        self.json = lookupResultData
+        self.json = json
+        self.languagePair = languagePair
         self.lastSearchDate = lastSearchDate
         self.isBookmarked = isBookmarked
         self.showInHistory = showInHistory
@@ -35,7 +37,7 @@ class CachedLangs {
 }
 
 @Model
-class LastSelectedLangsPair {
+class LangPair {
     var source: Language
     var target: Language
     

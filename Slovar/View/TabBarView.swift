@@ -22,7 +22,7 @@ struct TabBarView: View {
                     Label("Search", systemImage: "magnifyingglass")
                 }
                 .tag(Tab.search)
-            HistoryView()
+            HistoryView(context: modelContext)
                 .tabItem {
                     Label("History", systemImage: "clock")
                 }

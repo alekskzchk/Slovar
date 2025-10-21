@@ -19,7 +19,7 @@ class SearchViewModel {
     var allLanguages: [Language] = []
     var selectedSource: Language?
     var selectedTarget: Language?
-    var lastSelectedLangsPair: LastSelectedLangsPair?
+    var lastSelectedLangsPair: LangPair?
     let dictionaryAPI = DictionaryAPI()
     private let persistenceManager: PersistenceManager
     
@@ -95,7 +95,7 @@ class SearchViewModel {
         }
         
         let id = persistenceManager.makeCacheItemId(sourceLang: selectedSource, targetLang: selectedTarget, userPrompt: word)
-        let fetchResult = await persistenceManager.fetchFromCache(id: id)
+        let fetchResult = persistenceManager.fetchFromCache(id: id)
         if let cachedItem = fetchResult.0, let lookupResult = fetchResult.1 {
             cachedItem.lastSearchDate = .now
             print("SearchViewModel: Using cached result")
@@ -111,10 +111,10 @@ class SearchViewModel {
                 isLoadingSearchQuery = true
                 let lookupResult = try await dictionaryAPI.lookup(word: wordRefined, lang: languagePair)
                 print("SearchViewModel: Fetched new result")
-                persistenceManager.saveToCache(id: id, lookupResult: lookupResult)
+                persistenceManager.saveToCache(id: id, languagePair: languagePair, lookupResult: lookupResult)
                 print("SearchViewModel: Saved to cache")
                 isLoadingSearchQuery = false
-                return await persistenceManager.fetchFromCache(id: id).1
+                return persistenceManager.fetchFromCache(id: id).1
             } catch {
                 self.errorMessage = error.localizedDescription
                 return nil
