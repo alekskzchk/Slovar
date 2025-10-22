@@ -117,6 +117,7 @@ class SearchViewModel {
                 return persistenceManager.fetchFromCache(id: id).1
             } catch {
                 self.errorMessage = error.localizedDescription
+                isLoadingSearchQuery = false
                 return nil
             }
         }
