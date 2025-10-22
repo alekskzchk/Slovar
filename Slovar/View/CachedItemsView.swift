@@ -8,37 +8,44 @@
 import SwiftData
 import SwiftUI
 
-struct BookmarksView: View {
-    var viewModel: BookmarksViewModel
-    @State var selectedSortOrder: SortingOrder
-    init(context: ModelContext) {
-        self.viewModel = BookmarksViewModel(context: context)
-        self.selectedSortOrder = .alphabetical
+struct CachedItemsView: View {
+    var viewModel: CachedItemsVM
+    @State var selectedSortOrder: SortOrder
+    private var title: String
+    init(context: ModelContext, type: CachedVMType) {
+        self.viewModel = CachedItemsVM(context: context, type: type)
+        self.selectedSortOrder = .alphabet
+        switch type {
+            case .history:
+            self.title = "History"
+        case .bookmarks:
+            self.title = "Bookmarks"
+        }
     }
     
     var body: some View {
         NavigationStack {
-            List(viewModel.bookmarkedItems, id: \.cachedItem.id) { item in
+            List(viewModel.items, id: \.cachedItem.id) { item in
                 NavigationLink(value: item) {
                     HStack {
                         Text(item.lookupResult.def.first?.text ?? "")
                         Spacer()
-                        Text(viewModel.getLocalizedTargetLangString(for: item.cachedItem.languagePair))
+                        Text(viewModel.localizedTargetLangString(for: item.cachedItem.languagePair))
                             .foregroundStyle(.secondary)
                     }
                 }
             }
             .onAppear {
                 Task {
-                    await viewModel.fetchHistoryItems()
+                    await viewModel.fetchItems()
                 }
             }
-            .navigationTitle("Bookmarks")
+            .navigationTitle(title)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
-                        Button(action: { selectedSortOrder = .alphabetical }) {
-                            Label("Alphabet", systemImage: selectedSortOrder == .alphabetical ? "checkmark" : "")
+                        Button(action: { selectedSortOrder = .alphabet }) {
+                            Label("Alphabet", systemImage: selectedSortOrder == .alphabet ? "checkmark" : "")
                         }
                         Button(action: { selectedSortOrder = .language }) {
                                 Label("Language", systemImage: selectedSortOrder == .language ? "checkmark" : "")
@@ -69,11 +76,5 @@ struct BookmarksView: View {
                 DictionaryEntryView(lookupResult: item.lookupResult, cachedItem: item.cachedItem)
             }
         }
-        
     }
-}
-
-struct DictionaryEntryItem: Hashable {
-    var lookupResult: LookupResult
-    var cachedItem: CachedItem
 }

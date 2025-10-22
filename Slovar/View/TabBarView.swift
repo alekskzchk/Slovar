@@ -22,12 +22,12 @@ struct TabBarView: View {
                     Label("Search", systemImage: "magnifyingglass")
                 }
                 .tag(Tab.search)
-            HistoryView(context: modelContext)
+            CachedItemsView(context: modelContext, type: .history)
                 .tabItem {
                     Label("History", systemImage: "clock")
                 }
                 .tag(Tab.history)
-            BookmarksView(context: modelContext)
+            CachedItemsView(context: modelContext, type: .bookmarks)
                 .tabItem {
                     Label("Bookmarks", systemImage: "book")
                 }

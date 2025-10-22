@@ -41,7 +41,6 @@ struct PersistenceManager {
                 languagePair: languagePair,
                 lastSearchDate: .now,
                 isBookmarked: false,
-                showInHistory: true
             )
             context.insert(cachedItem)
             try? context.save()
