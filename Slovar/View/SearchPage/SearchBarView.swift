@@ -17,7 +17,7 @@ struct SearchBarView: View {
     @State var searchResult: LookupResult?
     @FocusState private var isFocused: Bool
     @Environment(\.colorScheme) var colorScheme
-    var clipboard = UIPasteboard.general.string
+    
     
     var body: some View {
         GeometryReader { proxy in
@@ -26,7 +26,7 @@ struct SearchBarView: View {
                     HStack(spacing: 10) {
                         if searchBarText.isEmpty {
                             Button {
-                                if let clipboard = clipboard {
+                                if let clipboard = UIPasteboard.general.string {
                                     searchBarText = clipboard
                                 }
                             } label: {
