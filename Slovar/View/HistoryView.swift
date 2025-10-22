@@ -18,12 +18,12 @@ struct HistoryView: View {
     
     var body: some View {
         NavigationStack {
-            List(viewModel.allHistoryItems, id: \.0.id) { item in
-                NavigationLink(value: item.1) {
+            List(viewModel.allHistoryItems, id: \.cachedItem.id) { item in
+                NavigationLink(value: item) {
                     HStack {
-                        Text(item.1.def.first?.text ?? "")
+                        Text(item.lookupResult.def.first?.text ?? "")
                         Spacer()
-                        Text(viewModel.getLocalizedTargetLangString(for: item.0.languagePair))
+                        Text(viewModel.getLocalizedTargetLangString(for: item.cachedItem.languagePair))
                             .foregroundStyle(.secondary)
                     }
                 }
@@ -65,8 +65,8 @@ struct HistoryView: View {
                     }
                 }
             }
-            .navigationDestination(for: LookupResult.self) { result in
-                DictionaryEntryView(lookupResult: result)
+            .navigationDestination(for: DictionaryEntryItem.self) { item in
+                DictionaryEntryView(lookupResult: item.lookupResult, cachedItem: item.cachedItem)
             }
         }
         

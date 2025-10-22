@@ -42,7 +42,7 @@ struct SearchPageView: View {
                 }
                 .background(GradientView())
                 .navigationDestination(item: $lookupResult) { result in
-                    DictionaryEntryView(lookupResult: result)
+                    DictionaryEntryView(lookupResult: result, cachedItem: viewModel.cachedItem)
                 }
             }
             

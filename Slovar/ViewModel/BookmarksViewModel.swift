@@ -1,23 +1,19 @@
 //
-//  HistoryViewModel.swift
+//  BookmarksViewModel.swift
 //  Slovar
 //
-//  Created by Алексей Козачук on 21.10.2025.
+//  Created by Алексей Козачук on 22.10.2025.
 //
 
 import Observation
 import SwiftData
 import SwiftUI
 
-enum SortingOrder {
-    case alphabetical, date, language
-}
-
 @MainActor
 @Observable
-class HistoryViewModel {
+class BookmarksViewModel {
     private let persistenceManager: PersistenceManager
-    var allHistoryItems = [DictionaryEntryItem]()
+    var bookmarkedItems = [DictionaryEntryItem]()
     var ascendingOrder: Bool = true
     
     
@@ -26,11 +22,13 @@ class HistoryViewModel {
     }
     
     func fetchHistoryItems() async {
-        guard let items = await persistenceManager.fetchAllCachedItems() else { return }
-        allHistoryItems.removeAll()
-        for item in items {
+        guard let cachedItems = await persistenceManager.fetchAllCachedItems() else { return }
+        bookmarkedItems.removeAll()
+        for item in cachedItems {
             if let lookupResult = persistenceManager.fetchFromCache(id: item.id).1 {
-                allHistoryItems.append(DictionaryEntryItem(lookupResult: lookupResult, cachedItem: item))
+                if item.isBookmarked {
+                    self.bookmarkedItems.append(DictionaryEntryItem(lookupResult: lookupResult, cachedItem: item))
+                }
                 
             }
         }
@@ -38,7 +36,7 @@ class HistoryViewModel {
     }
     
     func sort(order: SortingOrder) {
-        allHistoryItems.sort(by: {
+        bookmarkedItems.sort(by: {
             switch order {
             case .alphabetical:
                 let a = $0.lookupResult.def.first?.text ?? ""

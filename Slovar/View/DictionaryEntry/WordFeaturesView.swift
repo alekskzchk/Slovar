@@ -28,6 +28,6 @@ struct WordFeaturesView: View {
     }
 }
 
-#Preview {
-    DictionaryEntryView(lookupResult: .fromMockFile())
-}
+//#Preview {
+//    DictionaryEntryView(lookupResult: .fromMockFile())
+//}

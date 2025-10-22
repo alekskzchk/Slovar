@@ -18,6 +18,6 @@ struct TranscriptionView: View {
     }
 }
 
-#Preview {
-    DictionaryEntryView(lookupResult: .fromMockFile())
-}
+//#Preview {
+//    DictionaryEntryView(lookupResult: .fromMockFile())
+//}

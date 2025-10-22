@@ -13,6 +13,7 @@ import SwiftUI
 @Observable
 class SearchViewModel {
     var searchResult: LookupResult?
+    var cachedItem: CachedItem?
     var isLoadingLanguages: Bool = false
     var isLoadingSearchQuery: Bool = false
     var errorMessage: String?
@@ -98,6 +99,7 @@ class SearchViewModel {
         let fetchResult = persistenceManager.fetchFromCache(id: id)
         if let cachedItem = fetchResult.0, let lookupResult = fetchResult.1 {
             cachedItem.lastSearchDate = .now
+            self.cachedItem = cachedItem
             print("SearchViewModel: Using cached result")
             return lookupResult
         } else {
@@ -114,7 +116,9 @@ class SearchViewModel {
                 persistenceManager.saveToCache(id: id, languagePair: languagePair, lookupResult: lookupResult)
                 print("SearchViewModel: Saved to cache")
                 isLoadingSearchQuery = false
-                return persistenceManager.fetchFromCache(id: id).1
+                let fetchResult = persistenceManager.fetchFromCache(id: id)
+                self.cachedItem = fetchResult.0
+                return fetchResult.1
             } catch {
                 self.errorMessage = error.localizedDescription
                 isLoadingSearchQuery = false

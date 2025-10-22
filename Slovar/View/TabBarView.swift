@@ -27,16 +27,11 @@ struct TabBarView: View {
                     Label("History", systemImage: "clock")
                 }
                 .tag(Tab.history)
-            BookmarksView()
+            BookmarksView(context: modelContext)
                 .tabItem {
                     Label("Bookmarks", systemImage: "book")
                 }
                 .tag(Tab.bookmarks)
-            SettingsView()
-                .tabItem {
-                    Label("Settings", systemImage: "gearshape")
-                }
-                .tag(Tab.settings)
         }
     }
 }

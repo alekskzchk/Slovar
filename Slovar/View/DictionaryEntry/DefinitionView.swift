@@ -25,6 +25,6 @@ struct DefinitionView: View {
     }
 }
 
-#Preview {
-    DictionaryEntryView(lookupResult: .fromMockFile())
-}
+//#Preview {
+//    DictionaryEntryView(lookupResult: .fromMockFile())
+//}
