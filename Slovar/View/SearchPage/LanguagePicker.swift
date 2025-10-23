@@ -13,23 +13,21 @@ struct LanguagePicker: View {
 
     var body: some View {
         Menu {
-            if viewModel.selectedTarget != nil && isSourcePicker {
-                Button(action: { viewModel.selectedTarget = nil }, label: {
-                    HStack {
-                        Image(systemName: "trash")
-                        Text("Clear target")
-                    }
-                })
-            } else if viewModel.selectedSource != nil && !isSourcePicker {
+            if viewModel.selectedSource != nil && isSourcePicker {
                 Button(action: { viewModel.selectedSource = nil }, label: {
                     HStack {
                         Image(systemName: "trash")
-                        Text("Clear source")
+                        Text("Clear")
+                    }
+                })
+            } else if viewModel.selectedTarget != nil && !isSourcePicker {
+                Button(action: { viewModel.selectedTarget = nil }, label: {
+                    HStack {
+                        Image(systemName: "trash")
+                        Text("Clear")
                     }
                 })
             }
-            
-            //TODO: Make buttons above clear their respective picker choice, not each other's
                 
             ForEach(viewModel.allLanguages) { language in
                 var isCompatible: Bool {
