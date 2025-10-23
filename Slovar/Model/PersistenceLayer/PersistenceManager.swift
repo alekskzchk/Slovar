@@ -55,6 +55,8 @@ struct PersistenceManager {
         return try? context.fetch(descriptor)
     }
     
+    func deleteCachedItem(_ item: CachedItem) { context.delete(item) }
+    
     func saveLangs(_ langs: [String]) {
         let cachedLangs = CachedLangs(langs: langs)
         context.insert(cachedLangs)

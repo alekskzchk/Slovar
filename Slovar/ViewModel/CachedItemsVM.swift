@@ -70,4 +70,13 @@ class CachedItemsVM {
         let targetLanguageId = String(languagePair.split(separator: "-").last!)
         return Locale.current.localizedString(forIdentifier: targetLanguageId) ?? "N/A"
     }
+    
+    func deleteCachedItem(at offsets: IndexSet) {
+        for offset in offsets {
+            let item = items[offset]
+            self.items.remove(at: offset)
+            persistenceManager.deleteCachedItem(item.cachedItem)
+        }
+    }
+    
 }
