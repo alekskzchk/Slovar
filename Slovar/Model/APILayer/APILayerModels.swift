@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Language: Identifiable, Hashable, Codable {
+nonisolated struct Language: Identifiable, Hashable, Codable {
     var id: String
     var name: String
     var possiblePairsIds: [String]

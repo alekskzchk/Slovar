@@ -12,7 +12,7 @@ struct TabBarView: View {
     @State private var selectedTab: Tab = .search
     
     enum Tab {
-        case search, history, bookmarks, settings
+        case search, history, bookmarks
     }
     
     var body: some View {
