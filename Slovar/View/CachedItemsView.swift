@@ -10,11 +10,9 @@ import SwiftUI
 
 struct CachedItemsView: View {
     var viewModel: CachedItemsVM
-    @State var selectedSortOrder: SortOrder
     private var title: String
     init(context: ModelContext, type: CachedVMType) {
         self.viewModel = CachedItemsVM(context: context, type: type)
-        self.selectedSortOrder = .alphabet
         switch type {
             case .history:
             self.title = "History"
@@ -42,20 +40,21 @@ struct CachedItemsView: View {
             .onAppear {
                 Task {
                     await viewModel.fetchItems()
+                    viewModel.sort()
                 }
             }
             .navigationTitle(title)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
-                        Button(action: { selectedSortOrder = .alphabet }) {
-                            Label("Alphabet", systemImage: selectedSortOrder == .alphabet ? "checkmark" : "")
+                        Button(action: { viewModel.sortOrder = .alphabet }) {
+                            Label("Alphabet", systemImage: viewModel.sortOrder == .alphabet ? "checkmark" : "")
                         }
-                        Button(action: { selectedSortOrder = .language }) {
-                            Label("Language", systemImage: selectedSortOrder == .language ? "checkmark" : "")
+                        Button(action: { viewModel.sortOrder = .language }) {
+                            Label("Language", systemImage: viewModel.sortOrder == .language ? "checkmark" : "")
                         }
-                        Button(action: { selectedSortOrder = .date }) {
-                            Label("Date", systemImage: selectedSortOrder == .date ? "checkmark" : "")
+                        Button(action: { viewModel.sortOrder = .date }) {
+                            Label("Date", systemImage: viewModel.sortOrder == .date ? "checkmark" : "")
                         }
                         Menu("Order") {
                             Button(action: { viewModel.ascendingOrder = true }) {
@@ -68,11 +67,11 @@ struct CachedItemsView: View {
                     } label: {
                         Image(systemName: "list.bullet")
                     }
-                    .onChange(of: selectedSortOrder) {
-                        viewModel.sort(order: selectedSortOrder)
+                    .onChange(of: viewModel.sortOrder) {
+                        viewModel.sort()
                     }
                     .onChange(of: viewModel.ascendingOrder) {
-                        viewModel.sort(order: selectedSortOrder)
+                        viewModel.sort()
                     }
                 }
                 ToolbarItem(placement: .topBarLeading) {

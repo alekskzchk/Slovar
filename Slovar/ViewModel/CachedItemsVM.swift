@@ -9,7 +9,7 @@ import Observation
 import SwiftData
 import SwiftUI
 
-enum SortOrder {
+enum SortOrder: String, Codable { //to store as a RawRepresentable
     case alphabet, date, language
 }
 
@@ -22,11 +22,19 @@ enum CachedVMType {
 class CachedItemsVM {
     let persistenceManager: PersistenceManager
     var items = [DictionaryEntryItem]()
-    var ascendingOrder: Bool = true
+    var sortOrder: SortOrder
+    var ascendingOrder: Bool
     private var selfType: CachedVMType
     init(context: ModelContext, type: CachedVMType) {
         self.persistenceManager = PersistenceManager(context: context)
         self.selfType = type
+        let fetchedSortOrder = persistenceManager.fetchSortOrder()
+        self.sortOrder = fetchedSortOrder.0
+        if let fetchedOrderAscending = fetchedSortOrder.1?.ascending {
+            self.ascendingOrder = fetchedOrderAscending
+        } else {
+            self.ascendingOrder = true
+        }
     }
     
     func fetchItems() async {
@@ -44,12 +52,13 @@ class CachedItemsVM {
                     }
                 }
             }
-            sort(order: .date)
+            sort()
         }
     
-    func sort(order: SortOrder) {
+    
+    func sort() {
         items.sort(by: {
-            switch order {
+            switch sortOrder {
             case .alphabet:
                 let a = $0.lookupResult.def.first?.text ?? ""
                 let b = $1.lookupResult.def.first?.text ?? ""
@@ -64,6 +73,11 @@ class CachedItemsVM {
                 return ascendingOrder ? a < b : a > b
             }
         })
+        saveCurrentSortOrder()
+    }
+    
+    private func saveCurrentSortOrder() {
+        persistenceManager.saveSortOrder(sortOrder, ascending: ascendingOrder)
     }
     
     func localizedTargetLangString(for languagePair: String) -> String {

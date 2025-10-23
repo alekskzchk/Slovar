@@ -83,4 +83,24 @@ struct PersistenceManager {
         try? context.save()
         print("Saved langs pair to cache")
     }
+    
+    func saveSortOrder(_ order: SortOrder, ascending: Bool) {
+        if let cachedSortOrder = fetchSortOrder().1 {
+            cachedSortOrder.order = order
+            cachedSortOrder.ascending = ascending
+        } else {
+            let cachedSortOrder = CachedSortOrder(order: order, ascending: ascending)
+            context.insert(cachedSortOrder)
+            try? context.save()
+            print("Saved sort order")
+        }
+    }
+    
+    func fetchSortOrder() -> (SortOrder, CachedSortOrder?) {
+        let descriptor = FetchDescriptor<CachedSortOrder>()
+        let defaultOrder = SortOrder.date
+        guard let sortOrder = try? context.fetch(descriptor).first else { return (defaultOrder, nil) }
+        print("Retrieved sort order from cache")
+        return (sortOrder.order, sortOrder)
+    }
 }

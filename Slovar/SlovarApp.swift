@@ -14,6 +14,6 @@ struct SlovarApp: App {
         WindowGroup {
             TabBarView()
         }
-        .modelContainer(for: [CachedItem.self, CachedLangs.self, LangPair.self])
+        .modelContainer(for: [CachedItem.self, CachedLangs.self, LangPair.self, CachedSortOrder.self])
     }
 }

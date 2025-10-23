@@ -49,6 +49,17 @@ class LangPair {
     }
 }
 
+@Model
+class CachedSortOrder {
+    var order: SortOrder
+    var ascending: Bool
+    
+    init(order: SortOrder, ascending: Bool) {
+        self.order = order
+        self.ascending = ascending
+    }
+}
+
 struct DictionaryEntryItem: Hashable {
     var lookupResult: LookupResult
     var cachedItem: CachedItem
