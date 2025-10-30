@@ -17,10 +17,12 @@ struct DictionaryEntryView: View {
         GeometryReader { proxy in
             ScrollView(.vertical) {
                 VStack(alignment: .leading, spacing: 5) {
-                    HStack(alignment: .bottom) {
+                    VStack(alignment: .leading) {
                         DefinitionView(lookupResult: lookupResult, proxy: proxy)
                         WordFeaturesView(word: lookupResult.def.first!)
                             .padding(.trailing, 10)
+                            .padding(.bottom, 11)
+                            .background(Color.red.opacity(0.5))
                     }
                     .frame(maxWidth: proxy.size.width, alignment: .leading)
                     
@@ -32,7 +34,7 @@ struct DictionaryEntryView: View {
                     if let forms = lookupResult.def.first?.fl {
                         SubtitleView(text: String(localized: "Forms"))
                         Text(forms)
-                            .font(FontsProvider.garamond(25, relativeTo: .caption, weight: .semibold))
+                            .font(FontsProvider.garamond(24, relativeTo: .caption, weight: .semibold))
                             .frame(maxWidth: proxy.size.width, alignment: .leading)
                             .padding(.leading, 20)
                     }
@@ -67,7 +69,6 @@ struct DictionaryEntryView: View {
         }
     }
 }
-//#Preview {
-//
-//    DictionaryEntryView(lookupResult: .fromMockFile())
-//}
+#Preview {
+    DictionaryEntryView(lookupResult: .fromMockFile())
+}

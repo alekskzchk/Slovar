@@ -13,11 +13,13 @@ struct TranslationView: View {
         VStack(alignment: .leading) {
             HStack(alignment: .bottom, spacing: 5) {
                 Text(translation.text)
-                    .font(FontsProvider.garamond(18, relativeTo: .title3, weight: .bold))
+                    .font(FontsProvider.garamond(24, relativeTo: .title3, weight: .bold))
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
                     .frame(alignment: .leading)
                 WordFeaturesView(word: translation)
+                    .scaleEffect(0.8, anchor: .bottomLeading)
+                    .padding(.bottom, 2)
             }
             
             if let synonyms = translation.syn {
@@ -25,10 +27,11 @@ struct TranslationView: View {
                     ForEach(synonyms) { synonym in
                         HStack(alignment: .bottom, spacing: 5) {
                             Text(synonym.text)
-                                .font(FontsProvider.garamond(16, relativeTo: .caption2, weight: .semibold, italic: true))
+                                .font(FontsProvider.garamond(18, relativeTo: .caption2, weight: .semibold, italic: true))
                                 .frame(alignment: .leading)
                             WordFeaturesView(word: synonym)
-                                .scaleEffect(0.5, anchor: .bottomLeading)
+                                .scaleEffect(0.7, anchor: .bottomLeading)
+                                .padding(.bottom, 1)
                         }
                         
                     }
@@ -39,6 +42,6 @@ struct TranslationView: View {
     }
 }
 
-//#Preview {
-//    DictionaryEntryView(lookupResult: .fromMockFile())
-//}
+#Preview {
+    DictionaryEntryView(lookupResult: .fromMockFile())
+}

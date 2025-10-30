@@ -13,14 +13,14 @@ struct WordFeaturesView: View {
         var arr: [String] = []
         if let gender = word.gen { arr.append("\(gender).") }
         if let animacy = word.anm { arr.append("\(animacy).") }
-        if let partOfSpeech = word.pos { arr.append(partOfSpeech) }
+        if let partOfSpeech = word.pos { arr.append("\(partOfSpeech)") }
         return arr
     }
+    let font = FontsProvider.garamond(20, relativeTo: .callout, weight: .regular)
     var body: some View {
         HStack(alignment: .bottom, spacing: 2) {
             ForEach(features, id: \.self) { feature in
                 Text(feature)
-                    .font(FontsProvider.garamond(16, relativeTo: .callout, weight: .regular))
                     .foregroundStyle(Color(.secondaryLabel))
                     .padding([.leading, .trailing], 2)
             }
@@ -28,6 +28,6 @@ struct WordFeaturesView: View {
     }
 }
 
-//#Preview {
-//    DictionaryEntryView(lookupResult: .fromMockFile())
-//}
+#Preview {
+    DictionaryEntryView(lookupResult: .fromMockFile())
+}
